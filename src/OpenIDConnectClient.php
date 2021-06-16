@@ -951,35 +951,29 @@ class OpenIDConnectClient
         if (null === $header || !\is_object($header)) {
             throw new OpenIDConnectClientException('Error decoding JSON from token header');
         }
-	    
-	//*********** memo mod ******************
-	 * Simple Cache Function by Media Motion AG, to minimize Request
-	 */
-	$sCacheFileName = '_oicdjwk.json';
-	$projectDir = dirname(dirname(dirname(dirname(__DIR__)))) . "/public/";
-	$blnLoadNewFile = true;
 
-	if (file_exists($projectDir . $sCacheFileName)) {
-		$jwks = json_decode(file($projectDir . $sCacheFileName)[0]);
-		if(!empty($jwks->keys)) {
-			for ($i = 0; $i < count($jwks->keys); $i++) {
-				if ($jwks->keys[$i]->kid == $header->kid) {
-					$blnLoadNewFile = false;
-					break;
-				}
-			}
-		}
-	}
-
-	if ($blnLoadNewFile)
-	{
-		$sReturn = $this->fetchURL($this->getProviderConfigValue('jwks_uri'));
-		$jwks = json_decode($sReturn);
-		//write file
-		file_put_contents($projectDir . $sCacheFileName, $sReturn);
-	}
-
-	/******************* end memo mod *****************/
+        //Simple Cache Function by Media Motion AG, to minimize Request
+        $sCacheFileName = '_oicdjwk.json';
+        $projectDir = dirname(dirname(dirname(dirname(__DIR__)))) . "/public/";
+        $blnLoadNewFile = true;
+        if (file_exists($projectDir . $sCacheFileName)) {
+            $jwks = json_decode(file($projectDir . $sCacheFileName)[0]);
+            if(!empty($jwks->keys)) {
+                for ($i = 0; $i < count($jwks->keys); $i++) {
+                    if ($jwks->keys[$i]->kid == $header->kid) {
+                        $blnLoadNewFile = false;
+                        break;
+                    }
+                }
+            }
+        }
+        if ($blnLoadNewFile)
+        {
+            $sReturn = $this->fetchURL($this->getProviderConfigValue('jwks_uri'));
+            $jwks = json_decode($sReturn);
+            //write file
+            file_put_contents($projectDir . $sCacheFileName, $sReturn);
+        }
 	    
         $payload = implode('.', $parts);
         if ($jwks === NULL) {
