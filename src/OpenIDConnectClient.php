@@ -952,7 +952,7 @@ class OpenIDConnectClient
             throw new OpenIDConnectClientException('Error decoding JSON from token header');
         }
 	    
-	/*********** memo mod ******************
+	//*********** memo mod ******************
 	 * Simple Cache Function by Media Motion AG, to minimize Request
 	 */
 	$sCacheFileName = '_oicdjwk.json';
@@ -961,9 +961,9 @@ class OpenIDConnectClient
 
 	if (file_exists($projectDir . $sCacheFileName)) {
 		$jwks = json_decode(file($projectDir . $sCacheFileName)[0]);
-		if(!empty($jwks['keys'])) {
-			for ($i = 0; $i < count($jwks['keys']); $i++) {
-				if ($aFile['keys'][$i]['kid'] == $header - kid) {
+		if(!empty($jwks->keys)) {
+			for ($i = 0; $i < count($jwks->keys); $i++) {
+				if ($jwks->keys[$i]->kid == $header->kid) {
 					$blnLoadNewFile = false;
 					break;
 				}
@@ -978,6 +978,7 @@ class OpenIDConnectClient
 		//write file
 		file_put_contents($projectDir . $sCacheFileName, $sReturn);
 	}
+
 	/******************* end memo mod *****************/
 	    
         $payload = implode('.', $parts);
